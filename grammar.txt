@@ -3,8 +3,8 @@ grammar colors;
 
 <color> = RED | ORANGE | YELLOW | GREEN | BLUE | PURPLE | BLACK | WHITE | GREY | PINK;
 
-<comparative> = BRIGHT | DARK | SATURATED | DESATURATED;
 <direction> = MORE | LESS;
+<comparative> = BRIGHT | DARK | SATURATED | DESATURATED;
 <attribute> = BRIGHTER | DARKER | (<direction> <comparative>);
 <modifier> = (A LOT) | MUCH | (A LITTLE) | (A TINY BIT);
 
