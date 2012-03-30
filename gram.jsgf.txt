@@ -10,8 +10,8 @@ grammar colors;
 
 <question> = (CAN YOU MAKE IT) | (I WANT IT) | (I WOULD LIKE IT);
 
-public <initialquery> = ( [ ((CAN I HAVE A) | (SHOW ME A)) [<comparative>] ] <color>);
+<initialquery> = ( [ ((CAN I HAVE A) | (SHOW ME A)) [<comparative>] ] <color>);
+<update> = ( [<question>] [<modifier>] [<attribute>] <color> );
+<setformat> = ( [<question>] (HEX | RGB) );
 
-public <update> = ( [<question>] [<modifier>] [<attribute>] <color> );
-
-public <setformat> = ( [<question>] (HEX | RGB) );
+public <query> = (<initialquery> | <update> | <setformat>);
