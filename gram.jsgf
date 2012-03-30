@@ -4,14 +4,14 @@ grammar colors;
 <color> = RED | ORANGE | YELLOW | GREEN | BLUE | PURPLE | BLACK | WHITE | GREY | PINK;
 
 <direction> = MORE | LESS;
-<comparative> = BRIGHT | DARK | SATURATED | DESATURATED;
+<comparative> = BRIGHT | DARK | SATURATED | DESATURATED | <color>;
 <attribute> = BRIGHTER | DARKER | (<direction> <comparative>);
 <modifier> = (A LOT) | MUCH | (A LITTLE) | (A TINY BIT);
 
 <question> = (CAN YOU MAKE IT) | (I WANT IT) | (I WOULD LIKE IT);
 
 <initialquery> = ( [ ((CAN I HAVE A) | (SHOW ME A)) [<comparative>] ] <color>);
-<update> = ( [<question>] [<modifier>] [<attribute>] <color> );
+<update> = ( [<question>] [<modifier>] <attribute> );
 <setformat> = ( [<question>] (HEX | RGB) );
 
 public <query> = (<initialquery> | <update> | <setformat>);
