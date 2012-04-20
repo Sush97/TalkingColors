@@ -11,6 +11,18 @@ import sys
 import subprocess
 import os
 
+ps_base = os.environ['PS_BASE']
+# lab machine specific setup:
+lab_machines=['gatto', 'fluffy.cs.columbia.edu', 'cheshire',
+              'veu', 'dinah', 'voix', 'voce.cs.columbia.edu',
+              'chat', 'felix.cs.columbia.edu']
+hostname = os.uname()[1]
+if hostname in lab_machines:
+    sys.path.append(ps_base + '/lib/python2.5/site-packages')
+    import pocketsphinx as ps
+else:
+    import pocketsphinx as ps
+
 def main():
     if len(sys.argv) != 2:
         print("Usage: {0} <wav file>".format(sys.argv[0]))
@@ -19,23 +31,30 @@ def main():
     path = "/proj/speech/users/cs4706/asrhw/kmh2151/"
     grammar_file = "gram.jsgf"
     dictionary_file = "wlist5o.dic"
+    wav_file = sys.argv[1]
+    
+    # Acoustic model
+    am = ps_base + '/share/pocketsphinx/model/hmm/en_US/hub4_16k_4000s'
 
-    f = open(sys.argv[1], 'r')
-    command = ["/proj/speech/users/cs4706/pasr/recognize_wav.py", str(sys.argv[1]), "-g",\
-             os.path.join(path, grammar_file), "-a", "2", "-d", os.path.join(path, dictionary_file)]
-    process = subprocess.Popen(command, shell=False, stdout=subprocess.PIPE)    
-    output = process.communicate()[0]
+    decoder = ps.Decoder(am, 
+                        os.path.join(path, grammar_file), 
+                        os.path.join(path, dictionary_file))
+    
+    # Run the Recognizer
+    fh = file(wav_file, 'rb')
+    decoder.decode_raw(fh)
+    result = decoder.get_hyp()
+    fh.close()
+ 
+    output = result.split("'")
 
-    output = output.split("'")
     print("Our output:")
     print(output[1])
 
-    concept_file = open("concept_table.txt", 'w')
+    concept_file = file("concept_table.txt", 'w')
     concept_file.write(output[1] + "\n\n")
     concept_file.write(createConceptTable(output[1]))
     concept_file.close()
-
-    f.close()
 
 def createConceptTable(output):
     """ Takes output string and returns a string representing the concept table
@@ -80,10 +99,3 @@ def formatTable(output_table):
 
 if __name__ == "__main__": # Default "main method" idiom.
     main()
-
-# Color:
-# Attribute:
-# Degree:
-# Direction:
-# Output Format:
-
