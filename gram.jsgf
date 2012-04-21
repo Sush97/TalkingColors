@@ -8,8 +8,8 @@ grammar colors;
             GREYER | PINKISH | PINKER;
 
 <direction> = MORE | LESS;
-<comparative> = BRIGHT | DARK | SATURATED | DESATURATED | <color>;
-<attribute> = BRIGHTER | DARKER | (<direction> <comparative>) | ([<direction>] <coloradj>);
+<comparative> = LIGHT | BRIGHT | DARK | SATURATED | DESATURATED | <color>;
+<attribute> = LIGHTER | BRIGHTER | DARKER | (<direction> <comparative>) | ([<direction>] <coloradj>);
 <modifier> = (A LOT) | MUCH | (A LITTLE) | (A TINY BIT);
 
 <question> = (CAN YOU MAKE IT) | (I WANT IT) | (I WOULD LIKE IT);
