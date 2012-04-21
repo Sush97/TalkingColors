@@ -17,7 +17,7 @@ pygame.init()
 
 x = 0
 
-while x < 200:
+while x < 240:
     
     x += 10
     a = raw_input()
@@ -25,11 +25,11 @@ while x < 200:
     if x < 20:
         myState.updateWithString('purple')
     elif x < 60:
-        myState.changeBrightness('much', 'less')
-    elif x < 190:
-        myState.changeSaturation('a little', 'less')
+        myState.changeAttribute('brightness', 'much', 'less')
+    elif x < 230:
+        myState.changeAttribute('saturation', 'a little', 'less')
     else:
         myState.updateWithColor(green)
 
 
-print(myState.getRGB())
+print("Your color is " + myState.getRGB())
