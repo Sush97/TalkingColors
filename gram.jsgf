@@ -3,15 +3,19 @@ grammar colors;
 
 <color> = RED | ORANGE | YELLOW | GREEN | BLUE | PURPLE | BLACK | WHITE | GREY | PINK;
 
+<coloradj> = REDDISH | REDDER | ORANGISH | ORANGER | YELLOWISH | YELLOWER | GREENISH | GREENER |
+            BLUISH | BLUER | PURPLISH | PURPLER | BLACKISH | BLACKER | WHITISH | WHITER | GREYISH |
+            GREYER | PINKISH | PINKER;
+
 <direction> = MORE | LESS;
 <comparative> = BRIGHT | DARK | SATURATED | DESATURATED | <color>;
-<attribute> = BRIGHTER | DARKER | (<direction> <comparative>);
+<attribute> = BRIGHTER | DARKER | (<direction> <comparative>) | ([<direction>] <coloradj>);
 <modifier> = (A LOT) | MUCH | (A LITTLE) | (A TINY BIT);
 
 <question> = (CAN YOU MAKE IT) | (I WANT IT) | (I WOULD LIKE IT);
 
 <initialquery> = ( [ ((CAN I HAVE A) | (SHOW ME A)) [<comparative>] ] <color>);
 <update> = ( [<question>] [<modifier>] <attribute> );
-<setformat> = ( [<question>] (HEX | RGB) );
+<setformat> = ( [<question>] (HEX | HEXADECIMAL | RGB) );
 
 public <query> = (<initialquery> | <update> | <setformat>);
