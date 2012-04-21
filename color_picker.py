@@ -108,6 +108,7 @@ def main(argv):
             help = user_input["Help"]
             start_over = user_input["Start Over"]
             exit = user_input["Exit"]
+            undo = user_input["Exit"]
                 
             if help != None:
                 system_state = 'Help'
@@ -217,12 +218,15 @@ def getUserInput():
                     "Output Format": concept_table[4],
                     "Help": concept_table[5],
                     "Start Over": concept_table[6],
-                    "Exit": concept_table[7]}
-    #print(concept_dict)
+                    "Exit": concept_table[7],
+                    "Undo": concept_table[8]}
+    print(concept_dict)
     
     if all(val == None for val in concept_dict.values()):
-        print("Sorry, I didn't understand")
-        # query again, display friendly message
+        message = "Sorry, I didn't understand"
+        speakMessage(message)
+        # query again
+        return getUserInput()
         
     return concept_dict
     
@@ -240,10 +244,16 @@ def createConceptTable(output):
     help = ["HELP"]
     start_over = ["START OVER", "RESTART"]
     exit = ["QUIT", "STOP", "DONE", "EXIT"]
+    color_adjs = ["REDDER", "REDDISH", "ORANGER", "ORANGISH", "YEllOWER", "YELLOWISH", \
+        "GREENER", "GREENISH", "BLUER", "BLUISH", "PURPLER", "PURPLISH", "BLACKISH", \
+        "BLACKER", "WHITISH", "WHITER", "GREYISH", "GREYER", "PINKISH", "PINKER"]
+    undo = ["UNDO", "CANCEL"]
     
-    lists = [colors, attributes, degrees, directions, output_formats, help, start_over, exit]
+        
+    lists = [colors + color_adjs, attributes, degrees, directions, \
+        output_formats, help, start_over, exit, undo]
 
-    output_table = [None, None, None, None, None, None, None, None]
+    output_table = [None, None, None, None, None, None, None, None, None]
 
     for x in degrees:
         if x in output:
@@ -255,7 +265,7 @@ def createConceptTable(output):
 
     output = output.split()
     for x in output:
-        for i in [0, 1, 3, 4, 5, 7]:
+        for i in [0, 1, 3, 4, 5, 7, 8]:
             for y in lists[i]:
                 if x == y:
                     output_table[i] = y
