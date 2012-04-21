@@ -18,4 +18,7 @@ grammar colors;
 <update> = ( [<question>] [<modifier>] <attribute> );
 <setformat> = ( [<question>] (HEX | HEXADECIMAL | RGB) );
 
-public <query> = (<initialquery> | <update> | <setformat>);
+<navigationquestion> = (CAN I) | (CAN YOU) | (WOULD YOU) | (MAY I);
+<navigation> = (START OVER) | RESTART | HELP | QUIT | STOP | DONE | EXIT | UNDO | CANCEL;
+
+public <query> = (<initialquery> | <update> | <setformat> | ([<navigationquestion>] <navigation>));
