@@ -192,7 +192,12 @@ def speakMessage(message):
     
     print(message)
     
-    # use subprocess to run a perl script?
+    # use subprocess to run a perl script
+    # script generates wave file from string
+    
+    # use subprocess to play wav file
+    
+    
     
 
 def getUserInput():
