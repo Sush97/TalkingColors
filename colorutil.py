@@ -16,7 +16,7 @@ class ColorState(object):
     """ Color state object
     """
     
-    user_color = None
+    user_color = []
     window = None
     
     preset_color_values = {'red': (255, 0, 0),
@@ -70,61 +70,61 @@ class ColorState(object):
         self.window = pygame.display.set_mode((width, height))
         
         # fill it with starting color
-        self.user_color = pygame.Color(r, g, b)
-        self.window.fill(self.user_color)
+        self.user_color.append(pygame.Color(r, g, b))
+        self.window.fill(self.user_color[-1])
         
         #draw it to the screen
         pygame.display.flip()
         
     
-    def updateWithColor(self, newColor):
-        """ newColor is a pygame.Color() object
+    def updateWithColor(self, new_color):
+        """ new_color is a pygame.Color() object
         """
         
-        self.user_color = newColor
-        self.window.fill(self.user_color)
+        self.user_color.append(new_color)
+        self.window.fill(self.user_color[-1])
         pygame.display.flip()
         
-    def updateWithString(self, newColorName, newColorAttribute=None):
+    def updateWithString(self, new_color_name, new_color_attribute=None):
         """ Set the state with a color name string
             Accepted values are:
                 red, orange, yellow, green, blue, purple, black, white, pick, grey, gray
         """
         
-        if newColorName == None:
+        if new_color_name == None:
             return
         
-        col = self.preset_color_values[newColorName.lower()]
+        col = self.preset_color_values[new_color_name.lower()]
         print("Here is col:")
         print(col)
-        newColor = pygame.Color(col[0], col[1], col[2])
+        new_color = pygame.Color(col[0], col[1], col[2])
         
-        h = max(min(newColor.hsva[0], 360), 0)
-        s = max(min(newColor.hsva[1], 100), 0)
-        v = max(min(newColor.hsva[2], 100), 0)
-        a = max(min(newColor.hsva[3], 100), 0)
+        h = max(min(new_color.hsva[0], 360), 0)
+        s = max(min(new_color.hsva[1], 100), 0)
+        v = max(min(new_color.hsva[2], 100), 0)
+        a = max(min(new_color.hsva[3], 100), 0)
         
         # Apply attributes (modifiers)
-        if newColorAttribute in ["BRIGHT", "LIGHT", "DARK"]:
+        if new_color_attribute in ["BRIGHT", "LIGHT", "DARK"]:
             brightness = v
-            if newColorAttribute in ["BRIGHT", "LIGHT"]:
+            if new_color_attribute in ["BRIGHT", "LIGHT"]:
                 brightness += 30
-            elif newColorAttribute == "DARK":
+            elif new_color_attribute == "DARK":
                 brightness -= 30
             brightness = float(max(min(brightness, 100), 0))
-            newColor.hsva = (h, s, brightness, a)
+            new_color.hsva = (h, s, brightness, a)
         
-        if newColorAttribute in ["SATURATED", "DESATURATED"]:
+        if new_color_attribute in ["SATURATED", "DESATURATED"]:
             saturation = s
-            if newColorAttribute == "SATURATED":
+            if new_color_attribute == "SATURATED":
                 saturation += 30
-            elif newColorAttribute == "DESATURATED":
+            elif new_color_attribute == "DESATURATED":
                 saturation -= 30
             saturation = float(max(min(saturation, 100), 0))
-            newColor.hsva = (h, saturation, v, a)
+            new_color.hsva = (h, saturation, v, a)
         
-        self.user_color = newColor
-        self.window.fill(self.user_color)
+        self.user_color.append(new_color)
+        self.window.fill(self.user_color[-1])
         pygame.display.flip()
     
     def changeAttribute(self, attribute, degree, direction):
@@ -169,23 +169,25 @@ class ColorState(object):
             return # attribute is required
         
         sign = self.preset_direction_values[direction]
-        saturation = self.user_color.hsva[1]
-        brightness = self.user_color.hsva[2]
+        new_color = self.user_color[-1]
+        saturation = new_color.hsva[1]
+        brightness = new_color.hsva[2]
         if attribute == "brightness":
             brightness += self.preset_degree_values[degree]*sign
             brightness = float(max(min(brightness, 100), 0))
-            self.user_color.hsva = (max(min(self.user_color.hsva[0], 360), 0),
-                                max(min(self.user_color.hsva[1], 100), 0),
+            new_color.hsva = (max(min(new_color.hsva[0], 360), 0),
+                                max(min(new_color.hsva[1], 100), 0),
                                 brightness,
-                                max(min(self.user_color.hsva[3], 100), 0))
+                                max(min(new_color.hsva[3], 100), 0))
         if attribute == "saturation":
             saturation += self.preset_degree_values[degree]*sign
             saturation = float(max(min(saturation, 100), 0))
-            self.user_color.hsva = (max(min(self.user_color.hsva[0], 360), 0),
+            new_color.hsva = (max(min(new_color.hsva[0], 360), 0),
                                 saturation,
-                                max(min(self.user_color.hsva[2], 100), 0),
-                                max(min(self.user_color.hsva[3], 100), 0))
-        self.window.fill(self.user_color)
+                                max(min(new_color.hsva[2], 100), 0),
+                                max(min(new_color.hsva[3], 100), 0))
+        self.user_color.append(new_color)
+        self.window.fill(self.user_color[-1])
         pygame.display.flip()
     
     def adjustColor(self, color, degree, direction):
@@ -215,16 +217,16 @@ class ColorState(object):
             return # color is required
         
         # get current r g b values
-        current_r = self.user_color.r
-        current_g = self.user_color.g
-        current_b = self.user_color.b
+        current_r = self.user_color[-1].r
+        current_g = self.user_color[-1].g
+        current_b = self.user_color[-1].b
         
         # make target color from presets
         target_color = pygame.Color(self.preset_color_values[color][0],
                                 self.preset_color_values[color][1], self.preset_color_values[color][2])
     
         # match the target color's brightness with the current brightness
-        curr_v = self.user_color.hsva[2]
+        curr_v = self.user_color[-1].hsva[2]
         target_color.hsva = (max(min(target_color.hsva[0], 360), 0),
                                 max(min(target_color.hsva[1], 100), 0),
                                 curr_v,
@@ -250,8 +252,28 @@ class ColorState(object):
         new_g = int(max(min(current_g + sign*g_sign*weight*g_mean, 255), 0))
         new_b = int(max(min(current_b + sign*b_sign*weight*b_mean, 255), 0))
         
-        self.user_color = pygame.Color(new_r, new_g, new_b)
-        self.window.fill(self.user_color)
+        self.user_color.append(pygame.Color(new_r, new_g, new_b))
+        self.window.fill(self.user_color[-1])
+        pygame.display.flip()
+    
+    def undo(self):
+        """ Moves the last object on the state list to the front
+            Non-destructive undo
+        """
+        curr_color_state = self.user_color.pop()
+        self.user_color.insert(0, curr_color_state)
+        
+        self.window.fill(self.user_color[-1])
+        pygame.display.flip()
+        
+    def redo(self):
+        """ Moves first item on list to the end
+            Opposite of undo
+        """
+        curr_color_state = self.user_color[0]
+        self.user_color.append(curr_color_state)
+        
+        self.window.fill(self.user_color[-1])
         pygame.display.flip()
     
     
@@ -259,13 +281,13 @@ class ColorState(object):
         """ Returns string of the (R, G, B) value of the user color
         """
         
-        return str(self.user_color.r) + " " + str(self.user_color.g) + \
-            " " + str(self.user_color.b)
+        return str(self.user_color[-1].r) + " " + str(self.user_color[-1].g) + \
+            " " + str(self.user_color[-1].b)
     
     def getHEX(self):
         """ Returns a string representing the Hex value of the user color
         """
         
-        return hex(self.user_color.r) + " " + hex(self.user_color.g) + \
-            " " + hex(self.user_color.b)
+        return hex(self.user_color[-1].r) + " " + hex(self.user_color[-1].g) + \
+            " " + hex(self.user_color[-1].b)
                 
