@@ -143,9 +143,6 @@ def main(argv):
             # speak the message
             speakMessage(message)
             
-            # wait for input, parse it
-            getUserInput()
-            
             # set system state based on what the user says
             
             continue
