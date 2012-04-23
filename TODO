@@ -1,0 +1,14 @@
+TODO
+
+Fix help state
+
+Add undo stack to color state, add undo to system states
+
+Add the dialogs from the script
+
+Monday:
+Festival recordings, make new perl script
+
+Get pygame working
+
+Get the ASR working with autorecord
