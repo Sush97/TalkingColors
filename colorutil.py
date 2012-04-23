@@ -70,8 +70,7 @@ class ColorState(object):
         self.window = pygame.display.set_mode((width, height))
         
         # fill it with starting color
-        self.user_color.append(pygame.Color(r, g, b))
-        self.window.fill(self.user_color[-1])
+        self.window.fill(pygame.Color(r, g, b))
         
         #draw it to the screen
         pygame.display.flip()
@@ -95,8 +94,6 @@ class ColorState(object):
             return
         
         col = self.preset_color_values[new_color_name.lower()]
-        print("Here is col:")
-        print(col)
         new_color = pygame.Color(col[0], col[1], col[2])
         
         h = max(min(new_color.hsva[0], 360), 0)
@@ -131,6 +128,8 @@ class ColorState(object):
         """ Change the given attribute
             Degree is the amount of change
             Direction is either "more" for brighter or "less" for darker
+            
+            Returns True if successful, False otherwise
         """
             
         if degree != None:    
@@ -166,10 +165,12 @@ class ColorState(object):
                 else:
                     direction = "more"
         else:
-            return # attribute is required
+            return False
         
         sign = self.preset_direction_values[direction]
-        new_color = self.user_color[-1]
+        new_color = pygame.Color(self.user_color[-1].r, 
+                            self.user_color[-1].g, 
+                            self.user_color[-1].b)
         saturation = new_color.hsva[1]
         brightness = new_color.hsva[2]
         if attribute == "brightness":
@@ -186,9 +187,15 @@ class ColorState(object):
                                 saturation,
                                 max(min(new_color.hsva[2], 100), 0),
                                 max(min(new_color.hsva[3], 100), 0))
-        self.user_color.append(new_color)
-        self.window.fill(self.user_color[-1])
-        pygame.display.flip()
+                                
+        # only append new colors to the stack if there is some change from previous state
+        if self.user_color[-1] == new_color:   
+            return False
+        else:
+            self.user_color.append(new_color)
+            self.window.fill(self.user_color[-1])
+            pygame.display.flip()
+            return True
     
     def adjustColor(self, color, degree, direction):
         """ Add more (or less) of a given color
@@ -252,29 +259,34 @@ class ColorState(object):
         new_g = int(max(min(current_g + sign*g_sign*weight*g_mean, 255), 0))
         new_b = int(max(min(current_b + sign*b_sign*weight*b_mean, 255), 0))
         
-        self.user_color.append(pygame.Color(new_r, new_g, new_b))
-        self.window.fill(self.user_color[-1])
-        pygame.display.flip()
+        # only append new colors to the stack if there is some change from previous state
+        new_color = pygame.Color(new_r, new_g, new_b)
+        if self.user_color[-1] == new_color:   
+            return False
+        else:
+            self.user_color.append(new_color)
+            self.window.fill(self.user_color[-1])
+            pygame.display.flip()
+            return True
     
     def undo(self):
-        """ Moves the last object on the state list to the front
-            Non-destructive undo
+        """ Deletes last object on the state list to the front
+            Destructive undo
+            Won't delete the first element from the list (length of the list
+            is always > 1)
+            
+            Returns True if undo successful, false otherwise
         """
-        curr_color_state = self.user_color.pop()
-        self.user_color.insert(0, curr_color_state)
+
+        if len(self.user_color) < 2:
+            return False
+        
+        # delete the last color
+        self.user_color.pop()
         
         self.window.fill(self.user_color[-1])
         pygame.display.flip()
-        
-    def redo(self):
-        """ Moves first item on list to the end
-            Opposite of undo
-        """
-        curr_color_state = self.user_color[0]
-        self.user_color.append(curr_color_state)
-        
-        self.window.fill(self.user_color[-1])
-        pygame.display.flip()
+        return True
     
     
     def getRGB(self):

@@ -43,9 +43,13 @@ def main(argv):
     
     output_format = None
     
-    while system_state != 'Exit':
+    message = "Welcome to Talking Colors!  To begin, please pick a color.\nSay 'Help' at any time to hear a list of commands."
+            
+    # speak the message
+    speakMessage(message)
     
-        
+    while system_state != 'Exit':
+
         # get user input
         user_input = getUserInput()
         color = user_input["Color"]
@@ -61,20 +65,20 @@ def main(argv):
         message = None
         # Initial prompt
         if system_state == 'Greeting':
-            message = "Welcome to Talking Colors!  To begin, please pick a color.\nSay 'Help' at any time to hear a list of commands."
-            
-            # speak the message
-            speakMessage(message)
             
             # set color state to this color
             myState.updateWithString(color, attribute)
+            
+            if help != None:
+                system_state = 'Help'
+                continue # go there now
             
             system_state = 'Update State'
             continue
             
         # Start over prompt
         elif system_state == 'New Color':
-            message = "Pick a new color."
+            message = "Ok, let's start over.  Pick a new color."
             
             # speak the message
             speakMessage(message)
@@ -95,8 +99,7 @@ def main(argv):
         # update color prompt 
         elif system_state == 'Update State':
             if consecutive_count == 0:
-                message = "How does this look?  You can adjust the color's brightness \
-                and saturation, or adjust the hue."
+                message = "How does this look?  You can adjust the color's brightness and saturation, or adjust the hue."
             elif consecutive_count == 1:
                 message = "How does this look?"
             elif 1 < consecutive_count < 5:
@@ -106,13 +109,11 @@ def main(argv):
             
             # speak the message
             speakMessage(message)
-                
-            if help != None:
-                system_state = 'Help'
-                continue # go there now
             
             if undo != None:
-                myState.undo()
+                if not myState.undo():
+                    message = "You can't undo any further"
+                    speakMessage(message)
                 continue # stay in this state
             
             if start_over != None:
@@ -120,13 +121,27 @@ def main(argv):
                 continue # go there now
                         
             if attribute != None:
-                myState.changeAttribute(attribute, degree, direction)
+                # check if color has changed
+                if not myState.changeAttribute(attribute, degree, direction):
+                    if direction == None:
+                        direction = ""
+                    # display message if color is at extremes (and can't be changed)
+                    message = "I can't make the color any " + direction.lower() + attribute.lower()
+                    speakMessage(message)
+                    continue
             
             if color != None:
-                myState.adjustColor(color, degree, direction)
+                # check if color has changed
+                if not myState.adjustColor(color, degree, direction):
+                    if direction == None:
+                        direction = ""
+                    # display message if color is at extremes (and can't be changed)
+                    message = "I can't make the color any " + direction.lower() + color.lower()
+                    speakMessage(message)
+                    continue
                 
             # if user is done, set state to 'Exit'
-            elif exit != None:
+            if exit != None:
                 print("exiting...")
                 system_state = 'Exit'
             # else system state remains unchanged and we increment consecutive count
@@ -135,15 +150,13 @@ def main(argv):
             continue
             
         elif system_state == 'Help':
-            message = "Say a command to change the state of your color. You can alter a \
-            color's brightness, saturation, or hue. If at any point you want to undo your \
-            last command, say 'Undo'. When you are satisfied with your color, say 'Done.' \
-            Would you like to start over or continue with your current color?"
+            message = "Say a command to change the state of your color. You can alter a color's brightness, saturation, or hue. If at any point you want to undo your last command, say 'Undo'. When you are satisfied with your color, say 'Done.' Would you like to start over or continue with your current color?"
             
             # speak the message
             speakMessage(message)
             
             # set system state based on what the user says
+            # either go to New Color or Update State
             
             continue
     
@@ -221,7 +234,7 @@ def getUserInput():
                     "Start Over": concept_table[6],
                     "Exit": concept_table[7],
                     "Undo": concept_table[8]}
-    print(concept_dict)
+    #print(concept_dict)
     
     if all(val == None for val in concept_dict.values()):
         message = "Sorry, I didn't understand"

@@ -1,6 +1,6 @@
 "Welcome to Talking Colors!  To begin, please pick a color. Say 'Help' at any time to hear a list of commands."
 
-"Pick a new color."
+"Ok, let's start over.  Pick a new color."
 
 "How does this look?  You can adjust the color's brightness and saturation, or adjust the hue."
 
@@ -19,3 +19,12 @@
 "Your color is "
 
 "Thanks for using Talking Colors!"
+
+"I can't undo any further"
+
+"I can't make the color any more less bright light dark lighter brighter darker"
+
+"I can't make the color any less bright dark "
+
+"I can't make the color any lighter brighter darker"
+

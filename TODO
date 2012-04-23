@@ -6,6 +6,14 @@ Fix help state
 
 ✓Add the dialogs from the script
 
+✓Add dialog to tell user if color is already as bright or dark as possible
+
+Make color mixing default stronger
+
+Make system_state a stack like color state
+
+Fix color check at extreme dialog
+
 Monday:
 Festival recordings, make new perl script
 
