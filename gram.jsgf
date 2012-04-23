@@ -19,7 +19,7 @@ grammar colors;
 <setformat> = ( [<question>] (HEX | HEXADECIMAL | RGB) );
 
 <navigationquestion> = (CAN I) | (CAN YOU) | (WOULD YOU) | (MAY I);
-<navigation> = (START OVER) | RESTART | HELP | QUIT | STOP | DONE | EXIT | UNDO | CANCEL;
+<navigation> = (START OVER) | RESTART | HELP | QUIT | STOP | DONE | EXIT | UNDO | CANCEL | (GO BACK);
 
 <answers> = YES | NO | GOOD | OK | CONTINUE;
 
