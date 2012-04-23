@@ -44,6 +44,19 @@ def main(argv):
     output_format = None
     
     while system_state != 'Exit':
+    
+        
+        # get user input
+        user_input = getUserInput()
+        color = user_input["Color"]
+        attribute = user_input["Attribute"]
+        degree = user_input["Degree"]
+        direction = user_input["Direction"]
+        output_format = user_input["Output Format"]
+        help = user_input["Help"]
+        start_over = user_input["Start Over"]
+        exit = user_input["Exit"]
+        undo = user_input["Undo"]
         
         message = None
         # Initial prompt
@@ -52,11 +65,6 @@ def main(argv):
             
             # speak the message
             speakMessage(message)
-            
-            # wait for user input, parse it
-            user_input = getUserInput()
-            color = user_input["Color"]
-            attribute = user_input["Attribute"]
             
             # set color state to this color
             myState.updateWithString(color, attribute)
@@ -71,10 +79,10 @@ def main(argv):
             # speak the message
             speakMessage(message)
             
-            # wait for user input, parse it
-            user_input = getUserInput()
-            color = user_input["Color"]
-            attribute = user_input["Attribute"]
+            if undo != None:
+                myState.undo()
+                system_state = 'Update State'
+                continue # go there now
             
             # set color state to this color
             myState.updateWithString(color, attribute)
@@ -87,7 +95,8 @@ def main(argv):
         # update color prompt 
         elif system_state == 'Update State':
             if consecutive_count == 0:
-                message = "How does this look?  You can adjust the color's brightness and saturation, or adjust the hue."
+                message = "How does this look?  You can adjust the color's brightness \
+                and saturation, or adjust the hue."
             elif consecutive_count == 1:
                 message = "How does this look?"
             elif 1 < consecutive_count < 5:
@@ -97,22 +106,14 @@ def main(argv):
             
             # speak the message
             speakMessage(message)
-            
-            # wait for input, parse it
-            user_input = getUserInput()
-            color = user_input["Color"]
-            attribute = user_input["Attribute"]
-            degree = user_input["Degree"]
-            direction = user_input["Direction"]
-            output_format = user_input["Output Format"]
-            help = user_input["Help"]
-            start_over = user_input["Start Over"]
-            exit = user_input["Exit"]
-            undo = user_input["Exit"]
                 
             if help != None:
                 system_state = 'Help'
                 continue # go there now
+            
+            if undo != None:
+                myState.undo()
+                continue # stay in this state
             
             if start_over != None:
                 system_state = 'New Color'
@@ -134,7 +135,10 @@ def main(argv):
             continue
             
         elif system_state == 'Help':
-            message = "... Would you like to start over or continue with your current color?"
+            message = "Say a command to change the state of your color. You can alter a \
+            color's brightness, saturation, or hue. If at any point you want to undo your \
+            last command, say 'Undo'. When you are satisfied with your color, say 'Done.' \
+            Would you like to start over or continue with your current color?"
             
             # speak the message
             speakMessage(message)
@@ -247,7 +251,7 @@ def createConceptTable(output):
     color_adjs = ["REDDER", "REDDISH", "ORANGER", "ORANGISH", "YEllOWER", "YELLOWISH", \
         "GREENER", "GREENISH", "BLUER", "BLUISH", "PURPLER", "PURPLISH", "BLACKISH", \
         "BLACKER", "WHITISH", "WHITER", "GREYISH", "GREYER", "PINKISH", "PINKER"]
-    undo = ["UNDO", "CANCEL"]
+    undo = ["UNDO", "CANCEL", "GO BACK"]
     
         
     lists = [colors + color_adjs, attributes, degrees, directions, \
