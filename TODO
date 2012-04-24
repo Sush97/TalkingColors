@@ -12,10 +12,10 @@ Make color mixing default stronger
 
 Make system_state a stack like color state
 
-Fix color check at extreme dialog
+✓Fix color check at extreme dialog
 
 Monday:
-Festival recordings, make new perl script
+✓Festival recordings, make new perl script
 
 ✓Get pygame working
 

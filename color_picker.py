@@ -192,7 +192,16 @@ def speakMessage(message):
     
     print(message)
     
-    # use subprocess to run a perl script?
+    # use subprocess to run a perl script
+    # script generates wave file from string
+    perl_script_path = ""
+    command = ["perl", perl_script_path, message] # saves wav file to output.wav
+    subprocess.call(command, stdin=None, stdout=None, stderr=None, shell=False)
+    
+    # use subprocess to play wav file
+    command = ["play", "output.wav"] # plays wav file
+    subprocess.call(command, stdin=None, stdout=None, stderr=None, shell=False)
+    
     
 
 def getUserInput():
@@ -201,17 +210,21 @@ def getUserInput():
         Then, we recognize the concepts and return a dictionary.
     """
     
-    #decoder = ps.Decoder(am, os.path.join(path, grammar_file), 
-    #                os.path.join(path, dictionary_file))
+    # initialize decoder
+    decoder = ps.Decoder(am, os.path.join(path, grammar_file), 
+                    os.path.join(path, dictionary_file))
     
-    # Run autorecord
-    # ...
+    # Run autorecord with subprocess
+    command = ["python", "record.py"] # records wav, saves as input.wav
+    subprocess.call(command, stdin=None, stdout=None, stderr=None, shell=False)
+    
+    wav_file = input.wav
     
     # Run the Recognizer
-    #fh = file(wav_file, 'rb')
-    #decoder.decode_raw(fh)
-    #result = decoder.get_hyp()
-    #fh.close()
+    fh = file(wav_file, 'rb')
+    decoder.decode_raw(fh)
+    result = decoder.get_hyp()
+    fh.close()
     
     #output = result.split("'")
     #concept_table = createConceptTable(output[1])
