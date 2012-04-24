@@ -34,7 +34,7 @@ import pyaudio
 os.chdir(current)
   
 
-def record(thresh=250, verbose=True, path='./output.wav'):
+def record(thresh=250, verbose=True, path='./input.wav'):
     """
     Set verbose = False to supress stdout
     """
