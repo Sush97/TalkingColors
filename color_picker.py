@@ -194,9 +194,13 @@ def speakMessage(message):
     
     # use subprocess to run a perl script
     # script generates wave file from string
+    perl_script_path = ""
+    command = ["perl", perl_script_path, message] # saves wav file to output.wav
+    subprocess.call(command, stdin=None, stdout=None, stderr=None, shell=False)
     
     # use subprocess to play wav file
-    
+    command = ["play", "output.wav"] # plays wav file
+    subprocess.call(command, stdin=None, stdout=None, stderr=None, shell=False)
     
     
 
