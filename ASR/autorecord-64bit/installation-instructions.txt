@@ -1,0 +1,10 @@
+http://people.csail.mit.edu/hubert/pyaudio/
+
+Download: 	  	
+  PyAudio deb package (i386)
+  PyAudio deb package (amd64)
+
+Debian/Ubuntu
+To install, download the package and then run:
+% dpkg -i python-pyaudio_0.2.4-1_{i386,amd64}.deb
+

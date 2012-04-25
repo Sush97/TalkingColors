@@ -1,0 +1,24 @@
+#JSGF V1.0;
+grammar colors;
+
+<color> = RED | ORANGE | YELLOW | GREEN | BLUE | PURPLE | BLACK | WHITE | GREY | PINK;
+
+<coloradj> = REDDISH | REDDER | ORANGISH | ORANGER | YELLOWISH | YELLOWER | GREENISH | GREENER | BLUISH | BLUER | PURPLISH | PURPLER | BLACKISH | BLACKER | WHITISH | WHITER | GREYISH | GREYER | PINKISH | PINKER;
+
+<direction> = MORE | LESS;
+<comparative> = LIGHT | BRIGHT | DARK | SATURATED | DESATURATED | <color>;
+<attribute> = LIGHTER | BRIGHTER | DARKER | (<direction> <comparative>) | ([<direction>] <coloradj>);
+<modifier> = (A LOT) | MUCH | (A LITTLE) | (A TINY BIT);
+
+<question> = ([(CAN YOU)] (MAKE IT)) | (((I WANT) | (I WOULD LIKE) | (CAN I HAVE) | (SHOW ME)) (IT | A));
+
+<initialquery> = ( [<question>] [<comparative>] <color> );
+<update> = [<question>] [<modifier>] <attribute>;
+<setformat> = ( [<question>] (HEX | HEXADECIMAL | RGB) );
+
+<navigationquestion> = (CAN I) | (CAN YOU) | (WOULD YOU) | (MAY I);
+<navigation> = (START OVER) | RESTART | HELP | QUIT | STOP | ([I'M] DONE) | EXIT | UNDO | CANCEL | (GO BACK);
+
+<answers> = YES | NO | ([LOOKS | THAT'S] GOOD) | OK | CONTINUE;
+
+public <query> = ([<answers>] [<initialquery> | <update> | <setformat> | ([<navigationquestion>] <navigation>)] );

@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/!svn/ver/1603/portaudio/trunk/src/hostapi/skeleton
+END
+README.txt
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/repos/!svn/ver/1603/portaudio/trunk/src/hostapi/skeleton/README.txt
+END
+pa_hostapi_skeleton.c
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/repos/!svn/ver/1603/portaudio/trunk/src/hostapi/skeleton/pa_hostapi_skeleton.c
+END
