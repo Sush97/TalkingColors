@@ -8,9 +8,9 @@ Fix help state
 
 ✓Add dialog to tell user if color is already as bright or dark as possible
 
-Make color mixing default stronger
+✓Make color mixing default stronger
 
-Make system_state a stack like color state
+✓Make system_state a stack like color state (found workaround)
 
 ✓Fix color check at extreme dialog
 
@@ -19,4 +19,4 @@ Monday:
 
 ✓Get pygame working
 
-Get the ASR working with autorecord
+✓Get the ASR working with autorecord
