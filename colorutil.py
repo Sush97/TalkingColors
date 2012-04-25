@@ -202,7 +202,7 @@ class ColorState(object):
             Degree is the amount of change
             Direction is either "more" for brighter or "less" for darker
         """
-            
+
         if degree != None:    
             degree = degree.lower()
         # if no degree is specified, defaults to a little
@@ -216,7 +216,8 @@ class ColorState(object):
             else:
                 sign = -1
         else:
-            return # direction is required
+            direction = 'more'
+            sign = 1
         
         if color != None:
             color = color.lower()
@@ -245,7 +246,7 @@ class ColorState(object):
         target_b = target_color.b
         
         # add the r g b values
-        weight = self.preset_degree_values[degree]/55.0
+        weight = self.preset_degree_values[degree]/35.0
         
         r_sign = math.copysign(1.0, target_r - current_r)
         g_sign = math.copysign(1.0, target_g - current_g)
@@ -293,13 +294,45 @@ class ColorState(object):
         """ Returns string of the (R, G, B) value of the user color
         """
         
-        return str(self.user_color[-1].r) + " " + str(self.user_color[-1].g) + \
-            " " + str(self.user_color[-1].b)
+        message = "Red is"
+        red = str(self.user_color[-1].r)
+        for i in xrange(len(red)):
+            message += " " + red[i]
+
+        message += ", green is"
+        green = str(self.user_color[-1].g)
+        for i in xrange(len(green)):
+            message +=  " " + green[i]
+
+        message += ", blue is"
+        blue = str(self.user_color[-1].b)
+        for i in xrange(len(blue)):
+            message +=  " " + blue[i]
+    
+        return message
     
     def getHEX(self):
         """ Returns a string representing the Hex value of the user color
         """
-        
-        return hex(self.user_color[-1].r) + " " + hex(self.user_color[-1].g) + \
-            " " + hex(self.user_color[-1].b)
+
+        message = ""
+        red = str(hex(self.user_color[-1].r))
+        if len(red) == 4:
+            message += red[-2] + " " + red[-1] + ", "
+        else:
+            message += "0 " + red[-1] + ", "
+
+        green = str(hex(self.user_color[-1].g))
+        if len(green) == 4:
+            message += green[-2] + " " + green[-1] + ", "
+        else:
+            message += "0 " + red[-1] + ", "
+
+        blue = str(hex(self.user_color[-1].b))
+        if len(blue) == 4:
+            message += blue[-2] + " " + blue[-1] + " "
+        else:
+            message += "0 " + red[-1] + ", "
+
+        return message
                 
