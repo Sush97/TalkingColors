@@ -2,7 +2,7 @@
 
 """
 Usage:  record.py <threshold>
-Output: a wave file (output.wav)
+Output: a wave file (input.wav)
 ============================================================
 This is a Python script that uses pyAudio + portaudio 1.9 to 
 record an utterance and save it to a wave file. The program 
@@ -27,7 +27,7 @@ from struct import *
 
 current = os.getcwd()
 # os.chdir('/proj/speech/tools/autorecord')
-sys.path.append('/proj/speech/tools/autorecord/pyaudio/lib/python2.5/site-packages')
+sys.path.append('/proj/speech/tools/autorecord-64bit/pyaudio/lib/python2.6/site-packages')
 
 import pyaudio
 
