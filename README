@@ -1,0 +1,19 @@
+# Erik Ackermann
+# Richard Boyle
+# Kate Hansen
+#
+# SLP - Project 3
+# Friday, April 20, 2012
+
+README - SDS for Talking Colors
+
+Our SDS system is a simple voice-controlled color-picker.  The system displays a color window...
+
+
+USAGE
+
+To run Talking Colors, use the command "./color_picker.py".  This will initialize the program; further prompts are explained in the program.
+
+
+AVAILABLE COMMANDS
+
