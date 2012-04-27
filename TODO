@@ -1,6 +1,12 @@
 TODO
 
-Fix help state
+Change play command to /bin/na_play
+
+Add: Vocal confirmation for ending the interaction.Add: Generation of a System log file myUniSDSlog<sessionID> for each dialog, including:o	Date/time stamp for each system and user turno	System state recognized before each System prompto	Text of System promptso	Recognized user inputo	System’s semantic representation of user inputo	SDS state
+o	System response.
+o	Filenames for .wav files of each system output and user input associated with the appropriate System text entry and User recognized text entry.o	You may include other relevant information in your log files as you see fit.  Document the information your log provides and its format in a README.myUni.log file.
+
+✓Fix help state
 
 ✓Add undo stack to color state, add undo to system states
 
