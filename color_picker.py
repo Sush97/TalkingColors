@@ -17,6 +17,7 @@ import subprocess
 import string
 from random import choice
 from record import *
+import datetime
 ps_base = os.environ['PS_BASE']
 
 # lab machine specific setup:
@@ -47,13 +48,18 @@ def main(argv):
     myState.init()
     pygame.init()
 
-    path = "/home/kmh2151/TalkingColors/ASR/"
+    asr_path = "/home/kmh2151/TalkingColors/ASR/"
     grammar_file = "gram.jsgf"
     dictionary_file = "wlist5o.dic"
+    
+    now = datetime.datetime.now()
+    log_directory_path = "/home/kmh2151/TalkingColors/kmh2151_SDS_log_" + str(now) + "/"
+    log_file = open(os.path.join(log_directory_path, "kmh2151_SDS_log_" +str(now) + ".txt")
+    log_file.write("Begin session at " + str(now) + "\n")
 
     # initialize decoder
-    decoder = ps.Decoder(hmm=am, jsgf=os.path.join(path, grammar_file), 
-                    dict=os.path.join(path, dictionary_file))
+    decoder = ps.Decoder(hmm=am, jsgf=os.path.join(asr_path, grammar_file), 
+                    dict=os.path.join(asr_path, dictionary_file))
 
     while system_state != 'Exit':
        
@@ -61,10 +67,12 @@ def main(argv):
         # Initial prompt
         if system_state == 'Greeting':
 
+            log_file.write("System state: [" + system_state + "]\n")
+
             message = "Welcome to Talking Colors!  To begin, please pick a color.\nSay Help at any time to hear a list of commands."
                     
             # speak the message
-            speakMessage(message)
+            speakMessage(message, log_file)
 
             # get user input
             user_input = getUserInput(decoder)
@@ -98,7 +106,7 @@ def main(argv):
             message = "Ok, let's start over.  Pick a new color."
             
             # speak the message
-            speakMessage(message)
+            speakMessage(message, log_file)
 
             # get user input
             user_input = getUserInput(decoder)
@@ -156,7 +164,7 @@ def main(argv):
                                 "Looking good!"])
             
             # speak the message
-            speakMessage(message)
+            speakMessage(message, log_file)
 
             # get user input
             user_input = getUserInput(decoder)
@@ -182,7 +190,7 @@ def main(argv):
             if undo != None:
                 if not myState.undo():
                     message = "You can't undo any further"
-                    speakMessage(message)
+                    speakMessage(message, log_file)
                 continue # stay in this state
             
             if start_over != None:
@@ -198,7 +206,7 @@ def main(argv):
                         direction += " "
                     # display message if color is at extremes (and can't be changed)
                     message = "I can't make the color any " + direction.lower() + attribute.lower()
-                    speakMessage(message)
+                    speakMessage(message, log_file)
                     error_last = True
                     continue
             
@@ -211,7 +219,7 @@ def main(argv):
                         direction += " "
                     # display message if color is at extremes (and can't be changed)
                     message = "I can't make the color any " + direction.lower() + color.lower()
-                    speakMessage(message)
+                    speakMessage(message, log_file)
                     error_last = True
                     continue
         
@@ -236,7 +244,7 @@ def main(argv):
             message = "Say a command to change the state of your color. You can alter a color's brightness, saturation, or hue. If at any point you want to undo your last command, say Undo. When you are satisfied with your color, say Done. Would you like to start over or continue with your current color?"           
 
             # speak the message
-            speakMessage(message)
+            speakMessage(message, log_file)
 
             # get user input
             user_input = getUserInput(decoder)
@@ -296,18 +304,25 @@ def main(argv):
     elif output_format == "RGB":
         message += myState.getRGB()
     
-    speakMessage(message)
+    speakMessage(message, log_file)
     
     # Goodbye message
     goodbye_message = "Thanks for using Talking Colors!"
-    speakMessage(goodbye_message)
+    speakMessage(goodbye_message, log_file)
+    
+    log_file.close()
     
 
-def speakMessage(message):
+def speakMessage(message, log_file):
     """ Uses TTS system to speak a given string
     """
     
     print(message)
+    
+    
+    now = datetime.datetime.now()
+    # write the message to the log
+    log_file.write("System: " + message + " <output_" + str(now) + ".wav>\n")
     
     # use subprocess to run a perl script
     # script generates wave file from string
@@ -322,9 +337,17 @@ def speakMessage(message):
     subprocess.call(command, stdin=None, stdout=fnull, stderr=fnull, shell=False)
     fnull.close()
     
+    # re-save this wav file as 
+    # /home/kmh2151/TalkingColors/<log directory>/output_<current time>.wav
+    log_directory_path = os.path.dirname(log_file)
+    # copy the wav file
+    command = ["cp", 
+        "./TTS/output.wav", 
+        os.path.join(log_directory_path, "output_" + str(now) + ".wav")]
+    subprocess.call(command, stdin=None, stdout=fnull, stderr=fnull, shell=False)
     
 
-def getUserInput(decoder):
+def getUserInput(decoder, log_file):
     """ Uses autorecord and saves message.
         Then the decoder turns this message into a string.
         Then, we recognize the concepts and return a dictionary.
@@ -342,21 +365,34 @@ def getUserInput(decoder):
     result = decoder.get_hyp()[0]
     fh.close()
     
+    now = datetime.datetime.now()
+    
+    # re-save this wav file as 
+    # /home/kmh2151/TalkingColors/<current log>/input_<current time>.wav
+    log_directory_path = os.path.dirname(log_file)
+    # copy the wav file
+    command = ["cp", 
+        "./input.wav", 
+        os.path.join(log_directory_path, "input_" + str(now) + ".wav")]
+    subprocess.call(command, stdin=None, stdout=fnull, stderr=fnull, shell=False)
+    
     print("result:")
     print(result)
+    
+    # write the result to the log
+    log_file.write("User: " + result + " <output_" + str(now) + "\n")
 
     if result == None:
         message = "Sorry, I didn't understand"
-        speakMessage(message)
+        speakMessage(message, log_file)
         # query again
-        return getUserInput(decoder)
+        return getUserInput(decoder, log_file)
 
     concept_table = createConceptTable(result)
     
     # for text input
     #user_input = str(raw_input("User input: "))
     #user_input = user_input.upper()
-    
     # strip punctuation (only necessary with typed input)
     #exclude = set(string.punctuation)
     #user_input = ''.join(ch for ch in user_input if ch not in exclude)
@@ -376,11 +412,14 @@ def getUserInput(decoder):
                     "Negative": concept_table[10]}
     #print(concept_dict)
     
+    # write the concept dict to the log
+    log_file.write("RECOGNIZED ->" + str(concept_dict) + "\n")
+    
     if all(val == None for val in concept_dict.values()):
         message = "Sorry, I didn't understand"
-        speakMessage(message)
+        speakMessage(message, log_file)
         # query again
-        return getUserInput(decoder)
+        return getUserInput(decoder, log_file)
         
     return concept_dict
     
