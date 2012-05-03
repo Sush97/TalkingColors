@@ -10,7 +10,8 @@ my $TOPIC    = "color";
 
 # arguments 
 my $input = shift;    # input string
-my $wav_file = "output.wav"; # absolute path and name of the output wav file
+my $wav_file = shift; # absolute path and name of the output wav file
+my $BASEDIR = shift;
 
 # checks the parameters, printing an error message if anything is wrong.
 if (!$input || !$wav_file) {
@@ -25,7 +26,7 @@ if (!$input || !$wav_file) {
 
 # full path to the TTS: partc
 # (update if necessary)
-my $BASEDIR = "/home/kmh2151/TalkingColors/TTS";
+#my $BASEDIR = "TTS";
 
 
 # creates a Festival script

@@ -47,27 +47,27 @@ def main(argv):
     myState = ColorState()
     myState.init()
     pygame.init()
-
-    asr_path = "/home/kmh2151/TalkingColors/ASR/"
+    asr_path = "ASR/"
     grammar_file = "gram.jsgf"
     dictionary_file = "wlist5o.dic"
     
-    now = datetime.datetime.now()
-    log_directory_path = "/home/kmh2151/TalkingColors/kmh2151_SDS_log_" + str(now) + "/"
-    log_file = open(os.path.join(log_directory_path, "kmh2151_SDS_log_" +str(now) + ".txt")
-    log_file.write("Begin session at " + str(now) + "\n")
+    now = datetime.datetime.now().isoformat()
+    log_directory_path = "logs/kmh2151_SDS_log_" + now + "/"
+    os.mkdir(log_directory_path)
+    log_file = open(os.path.join(log_directory_path, "log.txt"), 'w')
+    log_file.write("Begin session at " + now + "\n")
 
     # initialize decoder
     decoder = ps.Decoder(hmm=am, jsgf=os.path.join(asr_path, grammar_file), 
-                    dict=os.path.join(asr_path, dictionary_file))
+                    dict=os.path.join(asr_path, dictionary_file), bestpath="No")
 
     while system_state != 'Exit':
+
+        log_file.write("System state: [" + system_state + "]\n")
        
         message = None
         # Initial prompt
         if system_state == 'Greeting':
-
-            log_file.write("System state: [" + system_state + "]\n")
 
             message = "Welcome to Talking Colors!  To begin, please pick a color.\nSay Help at any time to hear a list of commands."
                     
@@ -75,7 +75,7 @@ def main(argv):
             speakMessage(message, log_file)
 
             # get user input
-            user_input = getUserInput(decoder)
+            user_input = getUserInput(decoder, log_file)
             color = user_input["Color"]
             attribute = user_input["Attribute"]
             degree = user_input["Degree"]
@@ -109,7 +109,7 @@ def main(argv):
             speakMessage(message, log_file)
 
             # get user input
-            user_input = getUserInput(decoder)
+            user_input = getUserInput(decoder, log_file)
             color = user_input["Color"]
             attribute = user_input["Attribute"]
             degree = user_input["Degree"]
@@ -167,7 +167,7 @@ def main(argv):
             speakMessage(message, log_file)
 
             # get user input
-            user_input = getUserInput(decoder)
+            user_input = getUserInput(decoder, log_file)
             color = user_input["Color"]
             attribute = user_input["Attribute"]
             degree = user_input["Degree"]
@@ -247,7 +247,7 @@ def main(argv):
             speakMessage(message, log_file)
 
             # get user input
-            user_input = getUserInput(decoder)
+            user_input = getUserInput(decoder, log_file)
             color = user_input["Color"]
             attribute = user_input["Attribute"]
             degree = user_input["Degree"]
@@ -288,19 +288,19 @@ def main(argv):
     first_try = True
     while system_output_format == None:
         if first_try:
-            prompt = "What output format would you like?  Available options are RGB and Hexidecimal."     
+            prompt = "What output format would you like?  Available options are RGB and Hexadecimal."     
         else:
-            prompt = "I'm sorry, I didn't understand that.  Available options are RGB and Hexidecimal."
+            prompt = "I'm sorry, I didn't understand that.  Available options are RGB and Hexadecimal."
             
-        speakMessage(prompt)
-        output_format = getUserInput(decoder)["Output Format"]
+        speakMessage(prompt, log_file)
+        output_format = getUserInput(decoder, log_file)["Output Format"]
         system_output_format = output_format
             
     
     # output (speak) the color in the specified format
     message = ""
     if output_format == "HEX" or output_format == "HEXADECIMAL":
-        message += myState.getHEX()
+        message += "Your color is " + myState.getHEX()
     elif output_format == "RGB":
         message += myState.getRGB()
     
@@ -319,68 +319,53 @@ def speakMessage(message, log_file):
     
     print(message)
     
-    
-    now = datetime.datetime.now()
+    now = datetime.datetime.now().isoformat()
     # write the message to the log
-    log_file.write("System: " + message + " <output_" + str(now) + ".wav>\n")
+    log_file.write("System: " + message + " <" + now + "_output.wav>\n\n")
     
     # use subprocess to run a perl script
     # script generates wave file from string
-    perl_script_path = "/home/kmh2151/TalkingColors/TTS/speak.pl"
+    perl_script_path = "TTS/speak.pl"
+    log_directory_path = os.path.abspath(log_file.name)
+    log_directory_path = os.path.dirname(log_directory_path)
+    output_wav_path = log_directory_path + "/" + now + "_output.wav"
+    current = os.getcwd()
+    tts_path = os.path.join(current, "TTS/")
 
-    command = ["perl", perl_script_path, message] # saves wav file to output.wav
+    # saves wav file to output.wav
+    command = ["perl", perl_script_path, message, output_wav_path, tts_path] 
     subprocess.call(command, stdin=None, stdout=None, stderr=None, shell=False)
     
     # use subprocess to play wav file
     fnull = open(os.devnull, 'w')
-    command = ["play", "./TTS/output.wav"] # plays wav file
+    command = ["play", output_wav_path] # plays wav file
     subprocess.call(command, stdin=None, stdout=fnull, stderr=fnull, shell=False)
     fnull.close()
     
-    # re-save this wav file as 
-    # /home/kmh2151/TalkingColors/<log directory>/output_<current time>.wav
-    log_directory_path = os.path.dirname(log_file)
-    # copy the wav file
-    command = ["cp", 
-        "./TTS/output.wav", 
-        os.path.join(log_directory_path, "output_" + str(now) + ".wav")]
-    subprocess.call(command, stdin=None, stdout=fnull, stderr=fnull, shell=False)
-    
-
 def getUserInput(decoder, log_file):
     """ Uses autorecord and saves message.
         Then the decoder turns this message into a string.
         Then, we recognize the concepts and return a dictionary.
     """
-    
-    path = "/home/kmh2151/TalkingColors/"
 
-    record()
-    
-    wav_file = os.path.join(path, "input.wav")
+    now = datetime.datetime.now().isoformat()
+
+    log_directory_path = os.path.dirname(log_file.name)
+    input_wav_path = log_directory_path + "/" + now + "_input.wav"
+
+    record(thresh=250, verbose=True, path=input_wav_path)
     
     # Run the Recognizer
-    fh = file(wav_file, 'rb')
+    fh = file(input_wav_path, 'rb')
     decoder.decode_raw(fh)
     result = decoder.get_hyp()[0]
     fh.close()
-    
-    now = datetime.datetime.now()
-    
-    # re-save this wav file as 
-    # /home/kmh2151/TalkingColors/<current log>/input_<current time>.wav
-    log_directory_path = os.path.dirname(log_file)
-    # copy the wav file
-    command = ["cp", 
-        "./input.wav", 
-        os.path.join(log_directory_path, "input_" + str(now) + ".wav")]
-    subprocess.call(command, stdin=None, stdout=fnull, stderr=fnull, shell=False)
     
     print("result:")
     print(result)
     
     # write the result to the log
-    log_file.write("User: " + result + " <output_" + str(now) + "\n")
+    log_file.write("User: " + str(result) + " <" + now + "_input.wav>\n")
 
     if result == None:
         message = "Sorry, I didn't understand"
@@ -412,8 +397,13 @@ def getUserInput(decoder, log_file):
                     "Negative": concept_table[10]}
     #print(concept_dict)
     
-    # write the concept dict to the log
-    log_file.write("RECOGNIZED ->" + str(concept_dict) + "\n")
+    # write the concept table to the log
+    log_file.write("RECOGNIZED as:\n")
+    for x in concept_dict.keys():
+        if concept_dict[x] != None:
+            log_file.write("\t'" + x + "': " + concept_dict[x] + "\n")
+
+    log_file.write("\n")
     
     if all(val == None for val in concept_dict.values()):
         message = "Sorry, I didn't understand"

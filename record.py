@@ -24,6 +24,7 @@ Spoken Language Processing Spring 2010
 
 import wave, sys, os
 from struct import *
+import subprocess
 
 current = os.getcwd()
 # os.chdir('/proj/speech/tools/autorecord')
@@ -54,7 +55,7 @@ def record(thresh=250, verbose=True, path='./input.wav'):
                     rate = RATE,
                     input = True,
                     frames_per_buffer = chunk)
-    
+
     if verbose:
         print "* recording"
     all = []
@@ -75,7 +76,6 @@ def record(thresh=250, verbose=True, path='./input.wav'):
         sumsq = sumsq[1:]
         sumsq.append(sum([x**2 for x in window]))
         intensity = (sum(sumsq) / ndata) ** .5 # RMS
-        
         
         if intensity < thresh: # looks silent
             silencecount += 1
